@@ -68,6 +68,17 @@ app.post('/api/categorize', async (req, res) => {
   res.json(structuredTask);
 });
 
+app.delete('/api/tasks/:id', (req, res) => {
+  // Get the task id from the URL
+  const { id } = req.params;
+
+  // Delete the matching task from the database
+  const stmt = db.prepare('DELETE FROM tasks WHERE id = ?');
+  stmt.run(id);
+
+  res.send('Task deleted');
+});
+
 // start server
 const PORT = 3001;
 app.listen(PORT, () => {

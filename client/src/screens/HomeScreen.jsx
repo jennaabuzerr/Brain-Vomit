@@ -29,7 +29,18 @@ function HomeScreen() {
       return `Overdue by ${Math.abs(daysLeft)} day(s)`;
     }
     return `${daysLeft} days left`;
-}
+  }
+
+  // deleting task function
+  async function handleDelete(id) {
+    // Call the API to delete the task at the specified ID
+    await fetch(`http://localhost:3001/api/tasks/${id}`, {
+      method: 'DELETE',
+    });
+    // filter out the deleted task from the state and update the UI
+    setTasks(tasks.filter((task) => task.id !== id));
+  }
+
   return (
     <div>
       {/* Collecting tasks into a new array 
@@ -38,6 +49,7 @@ function HomeScreen() {
       {tasks.map((task) => (
         <div key={task.id}>
           {task.name} — {task.category} — {getDaysLeft(task.deadline)} 
+          <button onClick={() => handleDelete(task.id)}>Erase from brain</button>
         </div>
       ))}
     </div>
