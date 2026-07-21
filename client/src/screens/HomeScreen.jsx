@@ -16,21 +16,26 @@ function HomeScreen() {
   }, []);
 
   // Calculate days left until deadline
-  function getDaysLeftNum(deadline) {
+  function getCountdown(deadline) {
     const today = new Date();
     const due = new Date(deadline);
     const diffMs = due - today;
-    return Math.ceil(diffMs / 86400000);
+    const isOverdue = diffMs < 0;
+    const absDiff = isOverdue ? Math.abs(diffMs) : diffMs;
+    const hours = Math.floor((absDiff % 86400000) / 3600000);
+    const minutes = Math.floor((absDiff % 3600000) / 60000);
+    return { days: Math.ceil(absDiff / 86400000), hours, minutes, isOverdue };
   }
 
   //return {daysLeft} day left if == 1 and if overdue return overdue
-  function formatDaysLeft(daysLeft) {
-    if (daysLeft === 1) {
-      return "1 day left";
-    } else if (daysLeft < 0) {
-      return `Overdue by ${Math.abs(daysLeft)} day(s)`;
+  function formatTimeLeft(countdown) {
+    const { days, hours, minutes, isOverdue } = countdown;
+    if (countdown.days === 1) {
+      return `1 day : ${String(countdown.hours).padStart(2, '0')} hours : ${String(countdown.minutes).padStart(2, '0')} minutes`;
+    } else if (countdown.isOverdue) {
+      return `Overdue by ${Math.abs(countdown.days)} day(s) : ${String(countdown.hours).padStart(2, '0')} hours : ${String(countdown.minutes).padStart(2, '0')} minutes`;
     }
-    return `${daysLeft} days left`;
+    return `${countdown.days} days : ${String(countdown.hours).padStart(2, '0')} hours : ${String(countdown.minutes).padStart(2, '0')} minutes`;
 }
 
   // deleting task function
@@ -44,8 +49,8 @@ function HomeScreen() {
   }
 
   // Filter tasks into upcoming and keep in mind categories
-  const upcoming = tasks.filter((task) => getDaysLeftNum(task.deadline) <= 14);
-  const keepInMind = tasks.filter((task) => getDaysLeftNum(task.deadline) > 14);
+  const upcoming = tasks.filter((task) => getCountdown(task.deadline).days <= 14);
+  const keepInMind = tasks.filter((task) => getCountdown(task.deadline).days > 14);
 
   return (
     <div>
@@ -57,7 +62,7 @@ function HomeScreen() {
       <h2>Upcoming...</h2>
       {upcoming.map((task) => (
         <div key={task.id}>
-          {task.name} — {task.category} — {formatDaysLeft(getDaysLeftNum(task.deadline))} 
+          {task.name} — {task.category} — {formatTimeLeft(getCountdown(task.deadline))} 
           <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
         </div>
       ))}
@@ -65,7 +70,7 @@ function HomeScreen() {
       <h2>Keep in Mind...</h2>
       {keepInMind.map((task) => (
         <div key={task.id}>
-          {task.name} — {task.category} — {formatDaysLeft(getDaysLeftNum(task.deadline))} 
+          {task.name} — {task.category} — {formatTimeLeft(getCountdown(task.deadline))} 
           <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
         </div>
       ))}
