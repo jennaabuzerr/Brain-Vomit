@@ -59,7 +59,7 @@ function HomeScreen() {
           Display task name - category - days left until deadline
           Upcoming Tasks and Keep in Mind Tasks have different categories
       */}
-      <h2>Upcoming...</h2>
+      <h2 className="upcoming">Upcoming...</h2>
       {upcoming.map((task) => (
         <div key={task.id}>
           {task.name} — {task.category} — {formatTimeLeft(getCountdown(task.deadline))} 
@@ -67,7 +67,7 @@ function HomeScreen() {
         </div>
       ))}
       <br />
-      <h2>Keep in Mind...</h2>
+      <h2 className="keep-in-mind">Keep in Mind...</h2>
       {keepInMind.map((task) => (
         <div key={task.id}>
           {task.name} — {task.category} — {formatTimeLeft(getCountdown(task.deadline))} 

@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import BrainIcon from '../components/BrainIcon';
+import '../components/BrainDump.css';
+import ThoughtBubble from '../components/ThoughtBubble';
 
 function BrainDump() {
   // State to hold the list of tasks
@@ -55,16 +58,28 @@ function BrainDump() {
     }
   }
 
+
   return (
-    <div>
-      {/*
-        textarea for raw text input 
-        every char typed updates the rawText state
-      */}
-        <textarea
-          value={rawText}
-          onChange={(e) => setRawText(e.target.value)}
-        />
+    <div className="brain-dump-page">
+      <div className="brain-scene">
+        <BrainIcon width={340} />
+
+        {/*
+          textarea for raw text input 
+          every char typed updates the rawText state
+        */}
+        
+        <div className="bubble-container">
+          <ThoughtBubble />
+
+          <textarea
+            className="thought-bubble"
+            placeholder="Type Here..."
+            value={rawText}
+            onChange={(e) => setRawText(e.target.value)}
+          />
+        </div>
+
         <br />
         <button onClick={handleSubmit}>Organize</button>
         {error && <p>{error}</p>}
@@ -84,9 +99,10 @@ function BrainDump() {
             <p>{result.name}</p>
             <p>{result.category} — {result.priority}</p>
             <p>{result.deadline}</p>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
+    </div>
+    </div>
   );
 }
 
