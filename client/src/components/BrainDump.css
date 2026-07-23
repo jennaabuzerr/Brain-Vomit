@@ -1,3 +1,4 @@
+
 .brain-scene {
   position: relative;
   width: 500px;
@@ -30,4 +31,12 @@
   flex-direction: column;
   align-items: center;
   padding-top: 40px;
+}
+
+.brain-label {
+  font-family: var(--font-handwritten);
+  color: var(--brain-pink);
+  font-size: 50px;
+  text-align: center;
+  margin-top: -10px;
 }

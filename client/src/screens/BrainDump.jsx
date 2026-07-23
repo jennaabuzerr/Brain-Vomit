@@ -45,6 +45,7 @@ function BrainDump() {
     }
   }
 
+  // Function to handle deleting a task
   async function handleDelete(id) {
     setError(null);
     try {
@@ -58,12 +59,28 @@ function BrainDump() {
     }
   }
 
+  // Function to handle clearing all tasks
+  async function handleClearBrain() {
+  setError(null);
+  try {
+    await Promise.all(
+      tasks.map((task) =>
+        fetch(`http://localhost:3001/api/tasks/${task.id}`, { method: 'DELETE' })
+      )
+    );
+    setTasks([]);
+  } catch (error) {
+    console.error("Something went wrong, please try again", error);
+    setError("Something went wrong, please try again");
+  }
+}
+
 
   return (
     <div className="brain-dump-page">
       <div className="brain-scene">
         <BrainIcon width={340} />
-
+        <p className="brain-label">My Brain</p>
         {/*
           textarea for raw text input 
           every char typed updates the rawText state
@@ -81,7 +98,7 @@ function BrainDump() {
         </div>
 
         <br />
-        <button onClick={handleSubmit}>Organize</button>
+        <button onClick={handleSubmit}>Send to Brain</button>
         {error && <p>{error}</p>}
         <br />
         <div>
@@ -91,6 +108,7 @@ function BrainDump() {
             {selectedId === task.id && <button onClick={() => handleDelete(task.id)}>Declutter</button>}
           </div>
         ))}
+        <button onClick={handleClearBrain}>Clear Brain</button>
         <br />
         </div>
         {/*if result exists, display the result */}

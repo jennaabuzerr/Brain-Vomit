@@ -1,4 +1,4 @@
-function ThoughtBubble({ color = "var(--thought-bubble-blue)", width = 320 }) {
+function ThoughtBubble({ color = "var(--thought-bubble-blue)", width = 320 , fill = "#d9e8f6ff"}) {
   return (
     <svg
       viewBox="0 0 220 150"
@@ -18,13 +18,13 @@ function ThoughtBubble({ color = "var(--thought-bubble-blue)", width = 320 }) {
            C 76 128, 58 120, 58 104
            C 42 104, 32 88, 40 74
            C 30 66, 32 50, 45 45 Z"
-        fill="white"
+        fill={fill}
         stroke={color}
         strokeWidth="4"
         strokeLinejoin="round"
       />
-      <circle cx="38" cy="128" r="8" fill="white" stroke={color} strokeWidth="3.5" />
-      <circle cx="24" cy="144" r="5" fill="white" stroke={color} strokeWidth="3" />
+      <circle cx="38" cy="128" r="8" fill={fill} stroke={color} strokeWidth="3.5" />
+      <circle cx="24" cy="144" r="5" fill={fill} stroke={color} strokeWidth="3" />
     </svg>
   );
 }

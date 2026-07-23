@@ -1,5 +1,4 @@
-function BrainIcon({ color = "var(--brain-pink)", width = 260 }) {
-  return (
+function BrainIcon({ color = "var(--brain-pink)", fill = "#ffe0ec", width = 260 }) {  return (
     <svg
       viewBox="0 0 200 170"
       width={width}
@@ -21,7 +20,7 @@ function BrainIcon({ color = "var(--brain-pink)", width = 260 }) {
            C 165 25, 145 15, 130 20
            C 122 10, 106 10, 100 20
            C 94 10, 78 10, 70 20 Z"
-        fill="none"
+        fill={fill}
         stroke={color}
         strokeWidth="4"
         strokeLinecap="round"
