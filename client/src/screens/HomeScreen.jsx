@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import '../components/HomeScreen.css';
 
 function HomeScreen() {
   // useState to hold tasks
@@ -53,7 +54,7 @@ function HomeScreen() {
   const keepInMind = tasks.filter((task) => getCountdown(task.deadline).days > 14);
 
   return (
-    <div>
+    <div className ="home-page">
       {/* Collecting tasks into a new array 
           Unique key on every item in rendered list
           Display task name - category - days left until deadline
@@ -61,19 +62,25 @@ function HomeScreen() {
       */}
       <h2 className="upcoming">Upcoming...</h2>
       {upcoming.map((task) => (
-        <div key={task.id}>
-          {task.name} — {task.category} — {formatTimeLeft(getCountdown(task.deadline))} 
-          <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
+      <div key={task.id} className="task-card">
+        <div className="task-info">
+          <span>{task.name} — {task.category}</span>
+          <span className="task-countdown">{formatTimeLeft(getCountdown(task.deadline))}</span>
         </div>
+        <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
+      </div>
       ))}
       <br />
       <h2 className="keep-in-mind">Keep in Mind...</h2>
       {keepInMind.map((task) => (
-        <div key={task.id}>
-          {task.name} — {task.category} — {formatTimeLeft(getCountdown(task.deadline))} 
-          <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
+      <div key={task.id} className="task-card">
+        <div className="task-info">
+          <span>{task.name} — {task.category}</span>
+          <span className="task-countdown">{formatTimeLeft(getCountdown(task.deadline))}</span>
         </div>
-      ))}
+        <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
+      </div>
+    ))}
     </div>
   );
 }
