@@ -3,6 +3,7 @@ import BrainIcon from '../components/BrainIcon';
 import '../components/BrainDump.css';
 import ThoughtBubble from '../components/ThoughtBubble';
 import Legend from '../components/Legend';
+import categories from '../data/categories';
 
 function BrainDump() {
   // State to hold the list of tasks
@@ -82,6 +83,15 @@ function BrainDump() {
 
 const brainSize = Math.min(340 + tasks.length * 20, 600);
 
+function getPrioritySize(priority) {
+  if (priority === "High") {
+    return "1.3rem";
+  } else if (priority === "Medium") {
+    return "1rem";
+  } else {
+    return "0.85rem";
+  }
+}
 
   return (
     <div className="brain-dump-page">
@@ -89,12 +99,20 @@ const brainSize = Math.min(340 + tasks.length * 20, 600);
       <div className="brain-scene">
       {showList ? (
         <div className="brain-list-overlay" style={{ width: brainSize }}>
-          {tasks.map((task) => (
-          <div key={task.id} className="brain-task-item" onClick={() => setSelectedId(task.id)}>
-            {task.name}
-            {selectedId === task.id && <button onClick={() => handleDelete(task.id)}>Declutter</button>}
-          </div>
-        ))}
+          {tasks.map((task) => {
+          const categoryMatch = categories.find((cat) => cat.name === task.category);
+          return (
+            <div
+              key={task.id}
+              className="brain-task-item"
+              style={{ color: categoryMatch?.color, fontSize: getPrioritySize(task.priority)}}
+              onClick={() => setSelectedId(task.id)}
+            >
+              {task.name}
+              {selectedId === task.id && <button onClick={() => handleDelete(task.id)}>Declutter</button>}
+            </div>
+          );
+        })}
       </div>
     ) : (
       <BrainIcon width={brainSize} />

@@ -4,7 +4,7 @@ const categories = [
   { id: "events", name: "Events", color: "purple" },
   { id: "self-care", name: "Self Care", color: "green"},
   { id: "clubs-orgs", name: "Clubs/Orgs", color: "blue"},
-  { id: "chores", name: "Chores", color: "yellow"}
+  { id: "chores", name: "Chores", color: "magenta"}
 ]
 
 export default categories;
