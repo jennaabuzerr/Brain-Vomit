@@ -131,10 +131,10 @@ function getPrioritySize(priority) {
             value={rawText}
             onChange={(e) => setRawText(e.target.value)}
           />
+          <button className="send-to-brain-btn" onClick={handleSubmit}>Send to Brain</button>
         </div>
 
         <br />
-        <button onClick={handleSubmit}>Send to Brain</button>
         {error && <p>{error}</p>}
         <br />
         {/*if result exists, display the result */}

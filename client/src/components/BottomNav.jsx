@@ -1,10 +1,11 @@
 // Two props activeScreen and onNavigate
 // Render button for Home and Brain Dump that when clicked calls onNavigate with screen name home or brain dump
 // visually show which is active
+import './BottomNav.css';
 
 function BottomNav({ activeScreen, onNavigate }) {
   return (
-    <div>
+    <div className="bottom-nav">
         {/*Create home button and attribute onClick*/}
         <button 
             onClick={() => onNavigate("Home")} 
@@ -18,7 +19,8 @@ function BottomNav({ activeScreen, onNavigate }) {
             Brain Dump
         </button>
 
-    </div>
+    </div> 
+    
   );
 
 }

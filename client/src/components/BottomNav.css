@@ -1,0 +1,29 @@
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 14px 0;
+  background: #ffe0ec;
+  border-top: 3px solid var(--brain-pink);
+  box-sizing: border-box;
+}
+
+.nav-button {
+  font-family: var(--font-handwritten);
+  font-size: 1.1rem;
+  padding: 8px 24px;
+  border-radius: 999px;
+  border: 3px solid var(--brain-pink);
+  background: white;
+  color: var(--brain-pink);
+  cursor: pointer;
+}
+
+.nav-button.active {
+  background: var(--brain-pink);
+  color: white;
+}

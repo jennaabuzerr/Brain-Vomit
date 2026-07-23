@@ -29,3 +29,14 @@ h2.keep-in-mind {
   font-family: var(--font-handwritten);
   color: var(--keep-in-mind);
 }
+
+button {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: 2px solid var(--brain-pink);
+  background: white;
+  color: var(--brain-pink);
+  cursor: pointer;
+}
