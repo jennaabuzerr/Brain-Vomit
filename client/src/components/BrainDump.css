@@ -7,8 +7,6 @@
 
 .bubble-container {
   position: absolute;
-  top: -30px;
-  left: 280px;
 }
 
 .thought-bubble {
@@ -21,7 +19,7 @@
   background: transparent;
   resize: none;
   font-family: var(--font-body);
-  font-size: 30px;
+  font-size: 25px;
   z-index: 5;
   outline: none;
 }

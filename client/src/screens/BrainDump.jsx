@@ -43,6 +43,7 @@ function BrainDump() {
     //parse the response
     const data = await response.json();
     setResult(data);
+    setRawText("");
     } catch (error) {
       console.error("Something went wrong, please try again", error);
       setError("Something went wrong, please try again");
@@ -79,13 +80,15 @@ function BrainDump() {
   }
 }
 
+const brainSize = Math.min(340 + tasks.length * 20, 600);
+
 
   return (
     <div className="brain-dump-page">
       <Legend />
       <div className="brain-scene">
       {showList ? (
-        <div className="brain-list-overlay">
+        <div className="brain-list-overlay" style={{ width: brainSize }}>
           {tasks.map((task) => (
           <div key={task.id} className="brain-task-item" onClick={() => setSelectedId(task.id)}>
             {task.name}
@@ -94,7 +97,7 @@ function BrainDump() {
         ))}
       </div>
     ) : (
-      <BrainIcon width={340} />
+      <BrainIcon width={brainSize} />
     )}
       <p className="brain-label">My Brain</p>
         
@@ -102,7 +105,7 @@ function BrainDump() {
           textarea for raw text input 
           every char typed updates the rawText state
         */}
-        <div className="bubble-container">
+        <div className="bubble-container" style={{ top: -30, left: brainSize - 60 }}>
           <ThoughtBubble />
           <textarea
             className="thought-bubble"
