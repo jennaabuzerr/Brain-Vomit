@@ -31,6 +31,7 @@
   flex-direction: column;
   align-items: center;
   padding-top: 40px;
+  position: relative;
 }
 
 .brain-label {
@@ -39,4 +40,43 @@
   font-size: 50px;
   text-align: center;
   margin-top: -10px;
+}
+
+.legend {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  border: 2px solid var(--brain-pink);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  width: fit-content;
+  background-color: rgb(248, 211, 216);
+}
+
+.legend-title {
+  font-family: var(--font-handwritten);
+  font-weight: bold;
+  margin: 0 0 6px 0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-note {
+  font-size: 0.75rem;
+  font-style: italic;
+  margin: 6px 0 0 0;
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import BrainIcon from '../components/BrainIcon';
 import '../components/BrainDump.css';
 import ThoughtBubble from '../components/ThoughtBubble';
+import Legend from '../components/Legend';
 
 function BrainDump() {
   // State to hold the list of tasks
@@ -78,6 +79,7 @@ function BrainDump() {
 
   return (
     <div className="brain-dump-page">
+      <Legend />
       <div className="brain-scene">
         <BrainIcon width={340} />
         <p className="brain-label">My Brain</p>
