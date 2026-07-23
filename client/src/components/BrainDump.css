@@ -80,3 +80,19 @@
   font-style: italic;
   margin: 6px 0 0 0;
 }
+
+.brain-list-overlay {
+  width: 340px;
+  min-height: 260px;
+  background: #ffe0ec;
+  border: 4px solid var(--brain-pink);
+  border-radius: 50% / 40%;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  box-sizing: border-box;
+}

@@ -8,6 +8,9 @@ function BrainDump() {
   // State to hold the list of tasks
   const [tasks, setTasks] = useState([]);
 
+  // State to control whether to show the list of tasks in brain or not
+  const [showList, setShowList] = useState(false);
+
   // Effect to fetch tasks from server
   useEffect(() => {
     async function fetchTasks() {
@@ -81,16 +84,26 @@ function BrainDump() {
     <div className="brain-dump-page">
       <Legend />
       <div className="brain-scene">
-        <BrainIcon width={340} />
-        <p className="brain-label">My Brain</p>
+      {showList ? (
+        <div className="brain-list-overlay">
+          {tasks.map((task) => (
+          <div key={task.id} className="brain-task-item" onClick={() => setSelectedId(task.id)}>
+            {task.name}
+            {selectedId === task.id && <button onClick={() => handleDelete(task.id)}>Declutter</button>}
+          </div>
+        ))}
+      </div>
+    ) : (
+      <BrainIcon width={340} />
+    )}
+      <p className="brain-label">My Brain</p>
+        
         {/*
           textarea for raw text input 
           every char typed updates the rawText state
         */}
-        
         <div className="bubble-container">
           <ThoughtBubble />
-
           <textarea
             className="thought-bubble"
             placeholder="Type Here..."
@@ -103,16 +116,6 @@ function BrainDump() {
         <button onClick={handleSubmit}>Send to Brain</button>
         {error && <p>{error}</p>}
         <br />
-        <div>
-          {tasks.map((task) => (
-          <div key={task.id} onClick={() => setSelectedId(task.id)}>
-            {task.name}
-            {selectedId === task.id && <button onClick={() => handleDelete(task.id)}>Declutter</button>}
-          </div>
-        ))}
-        <button onClick={handleClearBrain}>Clear Brain</button>
-        <br />
-        </div>
         {/*if result exists, display the result */}
         {result && (
           <div>
@@ -121,7 +124,11 @@ function BrainDump() {
             <p>{result.deadline}</p>
         </div>
       )}
-    </div>
+      </div>
+      <button onClick={() => setShowList(!showList)}>
+        {showList ? "Hide" : "Show"}
+      </button>
+      <button onClick={handleClearBrain}>Clear Brain</button>
     </div>
   );
 }
