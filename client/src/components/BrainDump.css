@@ -74,10 +74,13 @@
   font-size: 0.85rem;
   width: fit-content;
   background-color: #fce1eb;
+  box-shadow: 3px 4px 2px var(--brain-pink);
 }
 
 .legend-title {
   font-family: var(--font-handwritten);
+  font-size: 18px;
+  color: var(--brain-pink);
   font-weight: bold;
   margin: 0 0 6px 0;
 }
@@ -100,6 +103,15 @@
   font-size: 0.75rem;
   font-style: italic;
   margin: 6px 0 0 0;
+}
+
+.legend-actions {
+  position: absolute;
+  top: 250px;
+  left: 45px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .brain-list-overlay {

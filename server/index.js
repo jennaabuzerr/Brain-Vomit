@@ -69,7 +69,7 @@ app.post('/api/categorize', async (req, res) => {
 });
 
 app.delete('/api/tasks/:id', (req, res) => {
-  // Get the task id from the URL
+  // Get the task id 
   const { id } = req.params;
 
   // Delete the matching task from the database
@@ -77,6 +77,23 @@ app.delete('/api/tasks/:id', (req, res) => {
   stmt.run(id);
 
   res.send('Task deleted');
+});
+
+app.put('/api/tasks/:id', (req, res) => {
+  // get the task id 
+  const { id } = req.params;
+  const { name, deadline, category, priority } = req.body;
+
+  // Update the task 
+  const stmt = db.prepare(
+    'UPDATE tasks SET name = ?, category = ?, priority = ?, deadline = ? WHERE id = ?'
+  );
+
+  //run statement
+  stmt.run( name, category, priority, deadline, id);
+
+  //display 
+  res.send('Task Updated');
 });
 
 // start server

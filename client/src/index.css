@@ -7,6 +7,7 @@
   --background: #fce1eb;
   --upcoming-urgent: #f01a61;
   --keep-in-mind: #f66db6;
+  --welcome: #bc2664;
   --font-handwritten: 'Kalam', cursive;
   --font-body: 'Nunito', sans-serif;
 }
@@ -18,16 +19,32 @@ body {
   margin: 0;
 }
 
+/* Welcome Heading for home page*/
+h1.welcome{
+  font-family: var(--font-handwritten);
+  font-size: 48px;
+  text-align: center;
+  color: white;
+  background-color: var(--brain-pink);
+  box-shadow: 4px 4px 2px var(--welcome);
+}
+
 /* Heading for upcoming on home page */
 h2.upcoming {
   font-family: var(--font-handwritten);
-  color: var(--upcoming-urgent);
+  color: white;
+  text-align: center;
+  background-color: var(--upcoming-urgent);
+  box-shadow: 4px 4px 2px var(--welcome);
 }
 
 /* Heading for keep in mind on home page */
 h2.keep-in-mind {
   font-family: var(--font-handwritten);
-  color: var(--keep-in-mind);
+  color: white;
+  text-align: center;
+  background-color: var(--keep-in-mind);
+  box-shadow: 4px 4px 2px var(--welcome);
 }
 
 button {

@@ -60,6 +60,8 @@ function HomeScreen() {
           Display task name - category - days left until deadline
           Upcoming Tasks and Keep in Mind Tasks have different categories
       */}
+      <h1 className="welcome">Welcome To My Brain Vomit!</h1>
+      <br />
       <h2 className="upcoming">Upcoming...</h2>
       {upcoming.map((task) => (
       <div key={task.id} className="task-card">

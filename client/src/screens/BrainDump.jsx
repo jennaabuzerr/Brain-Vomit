@@ -108,6 +108,12 @@ function getPrioritySize(priority) {
   return (
     <div className="brain-dump-page">
       <Legend />
+      <div className="legend-actions">
+        <button onClick={() => setShowList(!showList)}>
+          {showList ? "Hide List" : "Show List"}
+        </button>
+        <button onClick={handleClearBrain}>Clear Brain</button>
+      </div>
       <div className="brain-scene">
       {showList ? (
         <div className="brain-list-overlay" style={{ width: brainSize }}>
@@ -135,7 +141,7 @@ function getPrioritySize(priority) {
           textarea for raw text input 
           every char typed updates the rawText state
         */}
-        <div className="bubble-container" style={{ top: -30, left: brainSize - 60 }}>
+        <div className="bubble-container" style={{ top: -40, left: brainSize + 110 }}>
           <ThoughtBubble />
           <textarea
             className="thought-bubble"
@@ -159,10 +165,6 @@ function getPrioritySize(priority) {
         </div>
       )}
       </div>
-      <button onClick={() => setShowList(!showList)}>
-        {showList ? "Hide" : "Show"}
-      </button>
-      <button onClick={handleClearBrain}>Clear Brain</button>
     </div>
   );
 }
