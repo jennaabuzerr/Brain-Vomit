@@ -1,4 +1,4 @@
-import categories from '../data/categories';
+import categories from "../data/categories";
 
 function Legend() {
   return (
@@ -6,7 +6,10 @@ function Legend() {
       <p className="legend-title">Legend</p>
       {categories.map((cat) => (
         <div key={cat.id} className="legend-item">
-          <span className="legend-swatch" style={{ backgroundColor: cat.color }}></span>
+          <span
+            className="legend-swatch"
+            style={{ backgroundColor: cat.color }}
+          ></span>
           {cat.name}
         </div>
       ))}

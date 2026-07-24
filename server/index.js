@@ -1,104 +1,99 @@
-/* 
-  This file handles the servers logic and functionality for Brain Vomit
-  Overall it will handle all API requests and deal with the database interactions.
+/*
+  This file handles the server's logic and functionality for Brain Vomit.
+  It handles all API requests and deals with the database interactions.
  */
 
-// Import necessary packages
+// ============================================================
+// Imports & Setup
+// ============================================================
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const db = require('./db');
 const categorizeTask = require('./ai');
 
-//create app object
 const app = express();
 
-//cors allows react app on port to make requests to the server
 app.use(cors());
-//express.json reads request like raw text dump brain dump will send 
-//and converts them into javascript objects so route handlers can access them
 app.use(express.json());
 
-// Define routes
+// ============================================================
+// Health Check
+// ============================================================
 app.get('/', (req, res) => {
   res.send('Brain Vomit server is running');
 });
 
-//writing the route
-//route used for sending/creating data
+// ============================================================
+// Create Task — saves a task with already-known fields
+// ============================================================
 app.post('/api/tasks', (req, res) => {
-  // Extract task data from request body
   const { raw_text, name, deadline, category, priority } = req.body;
 
-  // Insert task data into the database
   const stmt = db.prepare(
     'INSERT INTO tasks (raw_text, name, deadline, category, priority, created_at) VALUES (?, ?, ?, ?, ?, ?)'
   );
-  // run statement with date.toISOString() creating a timestamp for current date
   stmt.run(raw_text, name, deadline, category, priority, new Date().toISOString());
 
   res.send('Task saved');
 });
 
-// retrieve route
+// ============================================================
+// Read Tasks — returns every saved task
+// ============================================================
 app.get('/api/tasks', (req, res) => {
-  // Get all tasks from the database
   const stmt = db.prepare('SELECT * FROM tasks');
-  // all() method retrieves all rows from the result set
   const tasks = stmt.all();
-  // Send the tasks as a JSON response
   res.json(tasks);
 });
 
+// ============================================================
+// Categorize + Create — sends raw text to the AI, saves the
+// structured result it returns
+// ============================================================
 app.post('/api/categorize', async (req, res) => {
-  // Categorize the task using AI
   const { raw_text } = req.body;
-  // Call the AI function
   const structuredTask = await categorizeTask(raw_text);
 
-  // structuredTask.name, structuredTask.deadline, etc. to insert into the database
-  // same INSERT pattern as /api/tasks route
   const stmt = db.prepare(
     'INSERT INTO tasks (raw_text, name, deadline, category, priority, created_at) VALUES (?, ?, ?, ?, ?, ?)'
   );
-  // run statement with date.toISOString() creating a timestamp for current date
   stmt.run(raw_text, structuredTask.name, structuredTask.deadline, structuredTask.category, structuredTask.priority, new Date().toISOString());
 
-  // display structuredTask
   res.json(structuredTask);
 });
 
+// ============================================================
+// Delete Task — removes one task by id
+// ============================================================
 app.delete('/api/tasks/:id', (req, res) => {
-  // Get the task id 
   const { id } = req.params;
 
-  // Delete the matching task from the database
   const stmt = db.prepare('DELETE FROM tasks WHERE id = ?');
   stmt.run(id);
 
   res.send('Task deleted');
 });
 
+// ============================================================
+// Update Task — edits an existing task's fields
+// ============================================================
 app.put('/api/tasks/:id', (req, res) => {
-  // get the task id 
   const { id } = req.params;
   const { name, deadline, category, priority } = req.body;
 
-  // Update the task 
   const stmt = db.prepare(
     'UPDATE tasks SET name = ?, category = ?, priority = ?, deadline = ? WHERE id = ?'
   );
+  stmt.run(name, category, priority, deadline, id);
 
-  //run statement
-  stmt.run( name, category, priority, deadline, id);
-
-  //display 
   res.send('Task Updated');
 });
 
-// start server
+// ============================================================
+// Start Server
+// ============================================================
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-

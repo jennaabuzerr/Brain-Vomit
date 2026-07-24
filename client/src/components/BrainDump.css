@@ -1,4 +1,3 @@
-
 .brain-scene {
   position: relative;
   width: 500px;
@@ -36,7 +35,7 @@
   box-shadow: 2px 4px 0 var(--thought-bubble-blue);
 }
 
-.send-to-brain-btn:hover{
+.send-to-brain-btn:hover {
   background: var(--thought-bubble-blue);
   color: white;
 }

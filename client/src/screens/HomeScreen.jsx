@@ -1,22 +1,28 @@
-import { useState, useEffect } from 'react';
-import '../components/HomeScreen.css';
+import { useState, useEffect } from "react";
+import "../components/HomeScreen.css";
 
 function HomeScreen() {
-  // useState to hold tasks
+  // ============================================================
+  // State — the full task list, loaded from the server
+  // ============================================================
   const [tasks, setTasks] = useState([]);
 
-  // useEffect to get tasks
+  // ============================================================
+  // Fetch Tasks — loads all saved tasks on mount
+  // ============================================================
   useEffect(() => {
     async function fetchTasks() {
-      const response = await fetch('http://localhost:3001/api/tasks');
+      const response = await fetch("http://localhost:3001/api/tasks");
       const data = await response.json();
       setTasks(data);
-    };
+    }
     fetchTasks();
-
   }, []);
 
-  // Calculate days left until deadline
+  // ============================================================
+  // Countdown Helpers — turn a deadline into days/hours/minutes,
+  // then into readable text
+  // ============================================================
   function getCountdown(deadline) {
     const today = new Date();
     const due = new Date(deadline);
@@ -28,61 +34,72 @@ function HomeScreen() {
     return { days: Math.ceil(absDiff / 86400000), hours, minutes, isOverdue };
   }
 
-  //return {daysLeft} day left if == 1 and if overdue return overdue
   function formatTimeLeft(countdown) {
     const { days, hours, minutes, isOverdue } = countdown;
     if (countdown.days === 1) {
-      return `1 day : ${String(countdown.hours).padStart(2, '0')} hours : ${String(countdown.minutes).padStart(2, '0')} minutes`;
+      return `1 day : ${String(countdown.hours).padStart(2, "0")} hours : ${String(countdown.minutes).padStart(2, "0")} minutes`;
     } else if (countdown.isOverdue) {
-      return `Overdue by ${Math.abs(countdown.days)} day(s) : ${String(countdown.hours).padStart(2, '0')} hours : ${String(countdown.minutes).padStart(2, '0')} minutes`;
+      return `Overdue by ${Math.abs(countdown.days)} day(s) : ${String(countdown.hours).padStart(2, "0")} hours : ${String(countdown.minutes).padStart(2, "0")} minutes`;
     }
-    return `${countdown.days} days : ${String(countdown.hours).padStart(2, '0')} hours : ${String(countdown.minutes).padStart(2, '0')} minutes`;
-}
+    return `${countdown.days} days : ${String(countdown.hours).padStart(2, "0")} hours : ${String(countdown.minutes).padStart(2, "0")} minutes`;
+  }
 
-  // deleting task function
+  // ============================================================
+  // Delete Task — removes one task by id
+  // ============================================================
   async function handleDelete(id) {
-    // Call the API to delete the task at the specified ID
     await fetch(`http://localhost:3001/api/tasks/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
-    // filter out the deleted task from the state and update the UI
     setTasks(tasks.filter((task) => task.id !== id));
   }
 
-  // Filter tasks into upcoming and keep in mind categories
-  const upcoming = tasks.filter((task) => getCountdown(task.deadline).days <= 14);
-  const keepInMind = tasks.filter((task) => getCountdown(task.deadline).days > 14);
+  // ============================================================
+  // Split Tasks — Upcoming (\u226414 days out) vs Keep in Mind (>14)
+  // ============================================================
+  const upcoming = tasks.filter(
+    (task) => getCountdown(task.deadline).days <= 14,
+  );
+  const keepInMind = tasks.filter(
+    (task) => getCountdown(task.deadline).days > 14,
+  );
 
+  // ============================================================
+  // Render
+  // ============================================================
   return (
-    <div className ="home-page">
-      {/* Collecting tasks into a new array 
-          Unique key on every item in rendered list
-          Display task name - category - days left until deadline
-          Upcoming Tasks and Keep in Mind Tasks have different categories
-      */}
+    <div className="home-page">
       <h1 className="welcome">Welcome To My Brain Vomit!</h1>
       <br />
       <h2 className="upcoming">Upcoming...</h2>
       {upcoming.map((task) => (
-      <div key={task.id} className="task-card">
-        <div className="task-info">
-          <span>{task.name} — {task.category}</span>
-          <span className="task-countdown">{formatTimeLeft(getCountdown(task.deadline))}</span>
+        <div key={task.id} className="task-card">
+          <div className="task-info">
+            <span>
+              {task.name} — {task.category}
+            </span>
+            <span className="task-countdown">
+              {formatTimeLeft(getCountdown(task.deadline))}
+            </span>
+          </div>
+          <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
         </div>
-        <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
-      </div>
       ))}
       <br />
       <h2 className="keep-in-mind">Keep in Mind...</h2>
       {keepInMind.map((task) => (
-      <div key={task.id} className="task-card">
-        <div className="task-info">
-          <span>{task.name} — {task.category}</span>
-          <span className="task-countdown">{formatTimeLeft(getCountdown(task.deadline))}</span>
+        <div key={task.id} className="task-card">
+          <div className="task-info">
+            <span>
+              {task.name} — {task.category}
+            </span>
+            <span className="task-countdown">
+              {formatTimeLeft(getCountdown(task.deadline))}
+            </span>
+          </div>
+          <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
         </div>
-        <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
-      </div>
-    ))}
+      ))}
     </div>
   );
 }
