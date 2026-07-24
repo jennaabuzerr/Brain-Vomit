@@ -39,4 +39,16 @@ button {
   background: white;
   color: var(--brain-pink);
   cursor: pointer;
+  box-shadow: 2px 4px 0 var(--brain-pink);
+  transition: all 0.1s ease;
+}
+
+button:hover {
+  background: var(--brain-pink);
+  color: white;
+}
+
+button:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--brain-pink);
 }

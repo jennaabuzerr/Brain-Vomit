@@ -33,6 +33,17 @@
   font-size: 0.85rem;
   padding: 4px 14px;
   z-index: 6;
+  box-shadow: 2px 4px 0 var(--thought-bubble-blue);
+}
+
+.send-to-brain-btn:hover{
+  background: var(--thought-bubble-blue);
+  color: white;
+}
+
+.send-to-brain-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--thought-bubble-blue);
 }
 
 .brain-dump-page {
