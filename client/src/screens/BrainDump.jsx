@@ -32,6 +32,9 @@ function BrainDump() {
   const [error, setError] = useState(null);
   // State to control size of thought bubble
   const textareaRef = useRef(null);
+  // Tracking which task (if any) is in edit mode
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({ name: "", category: "", priority: "", deadline: "" });
 
   // Expands thought bubble as text is inputted
   useEffect(() => {
@@ -93,6 +96,34 @@ function BrainDump() {
   }
 }
 
+// Function to handle editing tasks
+function handleEditClick(task) {
+  setEditingId(task.id);
+  setEditForm({
+    name: task.name,
+    category: task.category,
+    priority: task.priority,
+    deadline: task.deadline,
+  });
+}
+
+// function to send the PUT request for editing tasks
+async function handleSaveEdit(id) {
+  setError(null);
+  try {
+    await fetch(`http://localhost:3001/api/tasks/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editForm),
+    });
+    setTasks(tasks.map((t) => t.id === id ? { ...editForm, id: t.id } : t));
+    setEditingId(null);
+  } catch (error) {
+    console.error("Something went wrong, please try again", error);
+    setError("Something went wrong, please try again");
+  }
+}
+
 const brainSize = Math.min(340 + tasks.length * 20, 600);
 
 function getPrioritySize(priority) {
@@ -127,7 +158,43 @@ function getPrioritySize(priority) {
               onClick={() => setSelectedId(task.id)}
             >
               {task.name}
-              {selectedId === task.id && <button onClick={() => handleDelete(task.id)}>Declutter</button>}
+              {selectedId === task.id && (
+          <>
+            <button onClick={() => handleDelete(task.id)}>Declutter</button>
+            <button onClick={() => handleEditClick(task)}>Edit</button>
+          </>
+        )}
+              {editingId === task.id && (
+                <div className="edit-form">
+                  <input
+                    value={editForm.name}
+                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  />
+                  <select
+                    value={editForm.category}
+                    onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+                  >
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.name}>{cat.name}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={editForm.priority}
+                    onChange={(e) => setEditForm({ ...editForm, priority: e.target.value })}
+                  >
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                  </select>
+                  <input
+                    type="date"
+                    value={editForm.deadline}
+                    onChange={(e) => setEditForm({ ...editForm, deadline: e.target.value })}
+                  />
+                  <button onClick={() => handleSaveEdit(task.id)}>Save</button>
+                  <button onClick={() => setEditingId(null)}>Cancel</button>
+                </div>
+              )}
             </div>
           );
         })}
