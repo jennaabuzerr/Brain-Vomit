@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import BrainIcon from '../components/BrainIcon';
 import '../components/BrainDump.css';
 import ThoughtBubble from '../components/ThoughtBubble';
@@ -30,6 +30,18 @@ function BrainDump() {
   const [result, setResult] = useState(null);
   // State to hold any errors
   const [error, setError] = useState(null);
+  // State to control size of thought bubble
+  const textareaRef = useRef(null);
+
+  // Expands thought bubble as text is inputted
+  useEffect(() => {
+  if (textareaRef.current) {
+    textareaRef.current.style.height = 'auto';
+    const newHeight = Math.min(textareaRef.current.scrollHeight, 90);
+    textareaRef.current.style.height = `${newHeight}px`;
+  }
+}, [rawText]);
+  
 
   async function handleSubmit() {
     setError(null);
@@ -130,6 +142,7 @@ function getPrioritySize(priority) {
             placeholder="Type Here..."
             value={rawText}
             onChange={(e) => setRawText(e.target.value)}
+            ref={textareaRef}
           />
           <button className="send-to-brain-btn" onClick={handleSubmit}>Send to Brain</button>
         </div>
