@@ -13,7 +13,6 @@ function BrainDump() {
   const [showList, setShowList] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [rawText, setRawText] = useState("");
-  const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const textareaRef = useRef(null);
   const [editingId, setEditingId] = useState(null);
@@ -63,7 +62,9 @@ function BrainDump() {
       });
 
       const data = await response.json();
-      setResult(data);
+      const refreshed = await fetch('http://localhost:3001/api/tasks');
+      const updatedTasks = await refreshed.json();
+      setTasks(updatedTasks);
       setRawText("");
     } catch (error) {
       console.error("Something went wrong, please try again", error);
@@ -271,16 +272,6 @@ function BrainDump() {
 
         <br />
         {error && <p>{error}</p>}
-        <br />
-        {result && (
-          <div>
-            <p>{result.name}</p>
-            <p>
-              {result.category} — {result.priority}
-            </p>
-            <p>{result.deadline}</p>
-          </div>
-        )}
       </div>
     </div>
   );
