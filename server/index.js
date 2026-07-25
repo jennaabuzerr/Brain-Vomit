@@ -76,18 +76,33 @@ app.delete('/api/tasks/:id', (req, res) => {
 });
 
 // ============================================================
-// Update Task — edits an existing task's fields
+// Update Task — edits an existing task's fields including
+// optional section override from drag-and-drop
 // ============================================================
 app.put('/api/tasks/:id', (req, res) => {
   const { id } = req.params;
-  const { name, deadline, category, priority } = req.body;
+  const { name, deadline, category, priority, section } = req.body;
 
   const stmt = db.prepare(
-    'UPDATE tasks SET name = ?, category = ?, priority = ?, deadline = ? WHERE id = ?'
+    'UPDATE tasks SET name = ?, category = ?, priority = ?, deadline = ?, section = ? WHERE id = ?'
   );
-  stmt.run(name, category, priority, deadline, id);
+  stmt.run(name, category, priority, deadline, section, id);
 
   res.send('Task Updated');
+});
+
+// ============================================================
+// Update Section Only — called by drag-and-drop to move a task
+// between sections without touching any other fields
+// ============================================================
+app.patch('/api/tasks/:id/section', (req, res) => {
+  const { id } = req.params;
+  const { section } = req.body;
+
+  const stmt = db.prepare('UPDATE tasks SET section = ? WHERE id = ?');
+  stmt.run(section, id);
+
+  res.send('Section updated');
 });
 
 // ============================================================
