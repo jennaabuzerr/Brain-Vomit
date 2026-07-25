@@ -24,6 +24,33 @@ function BrainDump() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPulsing, setIsPulsing] = useState(false);
+
+  // ============================================================
+  // Brain Theme — color presets for the brain, saved to
+  // localStorage so the choice persists between sessions
+  // ============================================================
+  const [brainTheme, setBrainTheme] = useState(() => {
+    const saved = localStorage.getItem('brainTheme');
+    return saved ? JSON.parse(saved) : { name: 'Pink', stroke: '#ff6090', fill: '#ffe0ec' };
+  });
+
+  const brainThemes = [
+    { name: 'Pink',   stroke: '#ff6090', fill: '#ffe0ec' },
+    { name: 'Blue',   stroke: '#71c6ed', fill: '#dff0fa' },
+    { name: 'Green',   stroke: '#3fa34d', fill: '#d4f5dc' },
+    { name: 'Purple', stroke: '#9b59b6', fill: '#ead5f7' },
+    { name: 'Orange',  stroke: '#e8890c', fill: '#fde8c8' },
+    { name: 'Black',  stroke: '#222222', fill: '#eeeeee' },
+    { name: 'Red',   stroke: '#c33b3bff', fill: '#f8bebeff' },
+    { name: 'Yellow',   stroke: '#e1bc04ff', fill: '#f5f5b8ff' },
+    { name: 'White',   stroke: '#b3b0b0ff', fill: '#ffffff' }
+  ];
+
+  function handleThemeChange(theme) {
+    setBrainTheme(theme);
+    localStorage.setItem('brainTheme', JSON.stringify(theme));
+  }
+
   // ============================================================
   // Fetch Tasks — loads all saved tasks from the server on mount
   // ============================================================
@@ -173,6 +200,26 @@ function BrainDump() {
           {showList ? "Hide List" : "Show List"}
         </button>
         <button onClick={handleClearBrain}>Clear Brain</button>
+        <div className="theme-picker">
+        {brainThemes.map((theme) => (
+          <button
+            key={theme.name}
+            onClick={() => handleThemeChange(theme)}
+            title={theme.name}
+            style={{
+              background: theme.fill,
+              border: `3px solid ${theme.stroke}`,
+              width: '28px',
+              height: '28px',
+              borderRadius: '50%',
+              padding: 0,
+              boxShadow: brainTheme.name === theme.name
+                ? `0 0 0 3px ${theme.stroke}`
+                : '1px 2px 0 #aaa',
+            }}
+          />
+        ))}
+      </div>
       </div>
       <div className="brain-scene">
         <p className="brain-label">My Brain</p>
@@ -253,7 +300,7 @@ function BrainDump() {
           </div>
         ) : (
           <div className={isPulsing ? 'brain-pulse' : ''} style={{ display: 'inline-block' }}>
-            <BrainIcon width={brainSize} />
+            <BrainIcon width={brainSize} color={brainTheme.stroke} fill={brainTheme.fill} />
           </div>
         )}
         <div

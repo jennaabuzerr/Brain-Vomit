@@ -206,3 +206,11 @@
 .brain-pulse {
   animation: brainPulse 0.4s ease;
 }
+
+.theme-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  max-width: 100px;
+}
