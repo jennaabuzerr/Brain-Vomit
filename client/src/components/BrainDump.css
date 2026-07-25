@@ -53,7 +53,7 @@
   align-items: center;
   padding-top: 40px;
   position: relative;
-  padding-bottom: 100px;
+  padding-bottom: 50px;
 }
 
 .brain-label {
@@ -141,4 +141,37 @@
   font-family: var(--font-body);
   box-sizing: border-box;
   transition: width 0.25s ease, height 0.25s ease, top 0.25s ease, left 0.25s ease;
+}
+
+@media (max-width: 600px) {
+  .brain-dump-page {
+    padding-top: 20px;
+    overflow-x: hidden;
+  }
+
+  .brain-scene {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .legend {
+    position: static;
+    margin: 0 auto 16px auto;
+    width: fit-content;
+  }
+
+  .legend-actions {
+    position: static;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .bubble-container {
+    display: none;
+  }
+
+  .brain-label {
+    font-size: 32px;
+  }
 }

@@ -7,6 +7,8 @@ function HomeScreen() {
   // State — the full task list, loaded from the server
   // ============================================================
   const [tasks, setTasks] = useState([]);
+  const [sortBy, setSortBy] = useState("none");
+
 
   // ============================================================
   // Fetch Tasks — loads all saved tasks on mount
@@ -104,28 +106,52 @@ function HomeScreen() {
       );
     }
 
+    //============================================================
+    // A sort function that runs on filtered arrays
+    //============================================================
+    function sortTasks(taskList) {
+      if (sortBy === "priority") {
+        const order = { High: 0, Medium: 1, Low: 2 };
+        return [...taskList].sort((a, b) => order[a.priority] - order[b.priority]);
+      }
+      if (sortBy === "category") {
+        return [...taskList].sort((a, b) => a.category.localeCompare(b.category));
+      }
+      return taskList;
+    }
+
     return (
       <div className="home-page">
         <h1 className="welcome">Welcome To My Brain Vomit!</h1>
         <br />
 
+        <div className="sort-controls">
+          <label>Sort by: </label>
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <option value="none">Default</option>
+            <option value="priority">Priority</option>
+            <option value="category">Category</option>
+          </select>
+        </div>
+
         {overdue.length > 0 && (
           <>
             <h2 className="overdue">Overdue...</h2>
-            {overdue.map(renderCard)}
+            {sortTasks(overdue).map(renderCard)}
             <br />
           </>
         )}
 
         <h2 className="upcoming">Upcoming...</h2>
-        {upcoming.map(renderCard)}
+        {sortTasks(upcoming).map(renderCard)}
         {upcoming.length === 0 && <p className="empty-state">Nothing here — dump a thought!</p>}
         <br />
 
         <h2 className="keep-in-mind">Keep in Mind...</h2>
-        {keepInMind.map(renderCard)}
+        {sortTasks(keepInMind).map(renderCard)}
         {keepInMind.length === 0 && <p className="empty-state">Nothing here — dump a thought!</p>}
-      </div>
+
+        </div>
     );
   }
 

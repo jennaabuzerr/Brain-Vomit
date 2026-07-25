@@ -1,8 +1,10 @@
 .home-page {
   max-width: 700px;
+  width: 100%;
   margin: 0 auto;
   padding: 30px 20px 100px 20px;
   font-family: var(--font-body);
+  box-sizing: border-box;
 }
 
 .section-label {
@@ -13,6 +15,7 @@
 
 .task-card {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   background: white;
@@ -36,4 +39,20 @@
 
 .empty-state { 
   color: #999; font-style: italic; 
+}
+
+.sort-controls {
+  margin: 10px 0 20px 0;
+  font-family: var(--font-body);
+}
+
+.sort-controls select {
+  margin-left: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 2px solid var(--brain-pink);
+  font-family: var(--font-body);
+  background: white;
+  color: var(--brain-pink);
+  cursor: pointer;
 }
