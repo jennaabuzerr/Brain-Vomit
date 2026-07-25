@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "../components/HomeScreen.css";
+import categories from '../data/categories';
 
 function HomeScreen() {
   // ============================================================
@@ -72,8 +73,10 @@ function HomeScreen() {
       <h1 className="welcome">Welcome To My Brain Vomit!</h1>
       <br />
       <h2 className="upcoming">Upcoming...</h2>
-      {upcoming.map((task) => (
-        <div key={task.id} className="task-card">
+      {upcoming.map((task) => {
+        const categoryMatch = categories.find((cat) => cat.name === task.category);
+        return(
+        <div key={task.id} className="task-card" style={{ borderLeftColor: categoryMatch?.color, borderLeftWidth: '6px' }}>
           <div className="task-info">
             <span>
               {task.name} — {task.category}
@@ -84,12 +87,15 @@ function HomeScreen() {
           </div>
           <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
         </div>
-      ))}
+        );
+      })}
       {upcoming.length === 0 && <p className="empty-state">Nothing here — dump a thought!</p>}
       <br />
       <h2 className="keep-in-mind">Keep in Mind...</h2>
-      {keepInMind.map((task) => (
-        <div key={task.id} className="task-card">
+      {keepInMind.map((task) => {
+        const categoryMatch = categories.find((cat) => cat.name === task.category);
+        return(
+        <div key={task.id} className="task-card" style={{ borderLeftColor: categoryMatch?.color, borderLeftWidth: '6px' }}>
           <div className="task-info">
             <span>
               {task.name} — {task.category}
@@ -100,7 +106,8 @@ function HomeScreen() {
           </div>
           <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
         </div>
-      ))}
+        );
+      })}
       {keepInMind.length === 0 && <p className="empty-state">Nothing here — dump a thought!</p>}
     </div>
   );
