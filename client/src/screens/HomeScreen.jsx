@@ -1,7 +1,21 @@
 import { useState, useEffect } from "react";
 import "../components/HomeScreen.css";
 import categories from '../data/categories';
-import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+  closestCorners,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 // ============================================================
 // DroppableSection — a section that tasks can be dropped into.
@@ -29,22 +43,27 @@ function DroppableSection({ id, children }) {
 }
 
 // ============================================================
-// DraggableCard — wraps a task card so it can be picked up
-// and dragged. 'id' is the task id, 'children' is the card UI.
+// SortableCard — wraps a task card so it can be dragged to
+// reorder within a section OR moved to a different section.
+// useSortable combines draggable + sortable behavior together.
 // ============================================================
-import { useDraggable } from '@dnd-kit/core';
-
-function DraggableCard({ id, children }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id });
+function SortableCard({ id, children }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
 
   const style = {
-    transform: transform
-      ? `translate(${transform.x}px, ${transform.y}px)`
-      : undefined,
-    opacity: isDragging ? 0.5 : 1,
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
     cursor: 'grab',
     zIndex: isDragging ? 999 : 'auto',
-    position: isDragging ? 'relative' : 'static',
+    position: 'relative',
   };
 
   return (
@@ -137,30 +156,60 @@ const sensors = useSensors(
   }
 
   // ============================================================
-  // Handle Drag End — fires when a card is dropped into a section.
-  // Updates local state immediately, then saves to the server.
-  // 'active' = the card that was dragged
-  // 'over' = the section it was dropped into
+  // Handle Drag End function - moving task
   // ============================================================
   async function handleDragEnd({ active, over }) {
-    // If dropped outside any section, do nothing
-    if (!over) return;
+  if (!over) return;
 
-    const taskId = active.id;
-    const newSection = over.id;
+  const taskId = active.id;
+  const overId = over.id;
 
-    // Update local state so the card moves instantly on screen
+  // Find which section the dragged task currently lives in
+  const activeTask = tasks.find((t) => t.id === taskId);
+  const activeSection = getTaskSection(activeTask);
+
+  // Check if 'over' is a section id or a task id
+  const overIsSection = ['overdue', 'upcoming', 'keep-in-mind'].includes(overId);
+  const overTask = overIsSection ? null : tasks.find((t) => t.id === overId);
+  const overSection = overIsSection ? overId : getTaskSection(overTask);
+
+  if (activeSection === overSection) {
+    // Same section — reorder within section
+    if (!overIsSection && taskId !== overId) {
+      const sectionTasks = tasks.filter((t) => getTaskSection(t) === activeSection);
+      const oldIndex = sectionTasks.findIndex((t) => t.id === taskId);
+      const newIndex = sectionTasks.findIndex((t) => t.id === overId);
+      const reordered = arrayMove(sectionTasks, oldIndex, newIndex);
+
+      // Rebuild full task list with new order for this section
+      const otherTasks = tasks.filter((t) => getTaskSection(t) !== activeSection);
+      setTasks([...otherTasks, ...reordered]);
+    }
+  } else {
+    // Different section — move between sections
     setTasks(tasks.map((t) =>
-      t.id === taskId ? { ...t, section: newSection } : t
+      t.id === taskId ? { ...t, section: overSection } : t
     ));
 
-    // Save the new section to the database
     await fetch(`http://localhost:3001/api/tasks/${taskId}/section`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ section: newSection }),
+      body: JSON.stringify({ section: overSection }),
     });
   }
+}
+
+// ============================================================
+// getTaskSection — returns which section a task belongs to,
+// respecting manual overrides from drag-and-drop
+// ============================================================
+function getTaskSection(task) {
+  if (!task) return null;
+  if (getCountdown(task.deadline).isOverdue) return 'overdue';
+  if (task.section === 'upcoming') return 'upcoming';
+  if (task.section === 'keep-in-mind') return 'keep-in-mind';
+  return getCountdown(task.deadline).days <= 14 ? 'upcoming' : 'keep-in-mind';
+}
 
   // ======================================================================================
   // Split Tasks — checks manual section override first, then
@@ -235,49 +284,67 @@ const keepInMind = tasks.filter((task) => {
     </div>
 
     {/* DndContext is the "desk" — everything draggable sits inside it */}
-    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-
-      {overdue.length > 0 && (
-        <>
-          <h2 className="overdue">Overdue...</h2>
-          <DroppableSection id="overdue">
-            {sortTasks(overdue).map((task) => (
-              <DraggableCard key={task.id} id={task.id}>
-                {renderCard(task)}
-              </DraggableCard>
-            ))}
-          </DroppableSection>
-          <br />
-        </>
-      )}
-
-      <h2 className="upcoming">Upcoming...</h2>
-      <DroppableSection id="upcoming">
-        {sortTasks(upcoming).map((task) => (
-          <DraggableCard key={task.id} id={task.id}>
-            {renderCard(task)}
-          </DraggableCard>
-        ))}
-        {upcoming.length === 0 && (
-          <p className="empty-state">Nothing here — dump a thought!</p>
-        )}
+    <DndContext
+  sensors={sensors}
+  onDragEnd={handleDragEnd}
+  collisionDetection={closestCorners}
+>
+  {overdue.length > 0 && (
+    <>
+      <h2 className="overdue">Overdue...</h2>
+      <DroppableSection id="overdue">
+        <SortableContext
+          items={sortTasks(overdue).map((t) => t.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {sortTasks(overdue).map((task) => (
+            <SortableCard key={task.id} id={task.id}>
+              {renderCard(task)}
+            </SortableCard>
+          ))}
+        </SortableContext>
       </DroppableSection>
       <br />
+    </>
+  )}
 
-      <h2 className="keep-in-mind">Keep in Mind...</h2>
-      <DroppableSection id="keep-in-mind">
-        {sortTasks(keepInMind).map((task) => (
-          <DraggableCard key={task.id} id={task.id}>
-            {renderCard(task)}
-          </DraggableCard>
-        ))}
-        {keepInMind.length === 0 && (
-          <p className="empty-state">Nothing here — dump a thought!</p>
-        )}
-      </DroppableSection>
+  <h2 className="upcoming">Upcoming...</h2>
+  <DroppableSection id="upcoming">
+    <SortableContext
+      items={sortTasks(upcoming).map((t) => t.id)}
+      strategy={verticalListSortingStrategy}
+    >
+      {sortTasks(upcoming).map((task) => (
+        <SortableCard key={task.id} id={task.id}>
+          {renderCard(task)}
+        </SortableCard>
+      ))}
+      {upcoming.length === 0 && (
+        <p className="empty-state">Nothing here — dump a thought!</p>
+      )}
+    </SortableContext>
+  </DroppableSection>
+  <br />
 
-    </DndContext>
+  <h2 className="keep-in-mind">Keep in Mind...</h2>
+  <DroppableSection id="keep-in-mind">
+    <SortableContext
+      items={sortTasks(keepInMind).map((t) => t.id)}
+      strategy={verticalListSortingStrategy}
+    >
+      {sortTasks(keepInMind).map((task) => (
+        <SortableCard key={task.id} id={task.id}>
+          {renderCard(task)}
+        </SortableCard>
+      ))}
+      {keepInMind.length === 0 && (
+        <p className="empty-state">Nothing here — dump a thought!</p>
+      )}
+    </SortableContext>
+  </DroppableSection>
+  </DndContext>
   </div>
-)};
+  );
+}
 
 export default HomeScreen;
