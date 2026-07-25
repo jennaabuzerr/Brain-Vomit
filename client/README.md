@@ -17,7 +17,7 @@ Type it all out, let AI make sense of it. Brain Vomit turns a messy, unfiltered 
 - **Frontend:** React (Vite), custom CSS (no UI framework — every component, layout, and animation is hand-built)
 - **Backend:** Node.js + Express
 - **Database:** SQLite (via `better-sqlite3`)
-- **AI:** Google Gemini API, used to parse raw text into structured, categorized tasks
+- **AI:** Anthropic API, used to parse raw text into structured, categorized tasks
 
 ## Getting started
 
@@ -33,9 +33,9 @@ npm install
 npm run dev
 ```
 
-You'll need a Gemini API key in a `.env` file inside `server/`:
+You'll need an AI API key in a `.env` file inside `server/`:
 ```
-GEMINI_API_KEY=your_key_here
+AI_API_KEY=your_key_here
 ```
 
 ## On my use of AI
