@@ -23,6 +23,7 @@ function BrainDump() {
     priority: "",
     deadline: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ============================================================
   // Fetch Tasks — loads all saved tasks from the server on mount
@@ -53,6 +54,7 @@ function BrainDump() {
   // ============================================================
   async function handleSubmit() {
     setError(null);
+    setIsSubmitting(true);
     try {
       const response = await fetch("http://localhost:3001/api/categorize", {
         method: "POST",
@@ -66,6 +68,8 @@ function BrainDump() {
     } catch (error) {
       console.error("Something went wrong, please try again", error);
       setError("Something went wrong, please try again");
+    }finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -241,6 +245,7 @@ function BrainDump() {
                 </div>
               );
             })}
+            {tasks.length === 0 && <p>Your brain is empty — go dump something!</p>}
           </div>
         ) : (
           <BrainIcon width={brainSize} />
@@ -259,8 +264,8 @@ function BrainDump() {
             onChange={(e) => setRawText(e.target.value)}
             ref={textareaRef}
           />
-          <button className="send-to-brain-btn" onClick={handleSubmit}>
-            Send to Brain
+          <button className="send-to-brain-btn" onClick={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? "Thinking..." : "Send to Brain"}
           </button>
         </div>
 

@@ -33,3 +33,7 @@
   font-size: 0.8rem;
   color: #888;
 }
+
+.empty-state { 
+  color: #999; font-style: italic; 
+}

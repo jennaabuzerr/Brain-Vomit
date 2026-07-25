@@ -85,6 +85,7 @@ function HomeScreen() {
           <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
         </div>
       ))}
+      {upcoming.length === 0 && <p className="empty-state">Nothing here — dump a thought!</p>}
       <br />
       <h2 className="keep-in-mind">Keep in Mind...</h2>
       {keepInMind.map((task) => (
@@ -100,6 +101,7 @@ function HomeScreen() {
           <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
         </div>
       ))}
+      {keepInMind.length === 0 && <p className="empty-state">Nothing here — dump a thought!</p>}
     </div>
   );
 }
