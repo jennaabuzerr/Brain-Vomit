@@ -47,6 +47,15 @@ h2.keep-in-mind {
   box-shadow: 4px 4px 2px var(--welcome);
 }
 
+/* Heading for overdue on home page */
+h2.overdue {
+  font-family: var(--font-handwritten);
+  color: white;
+  text-align: center;
+  background-color: red;
+  box-shadow: 4px 4px 2px var(--welcome);
+}
+
 button {
   font-family: var(--font-body);
   font-size: 1rem;

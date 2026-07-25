@@ -26,7 +26,13 @@ function HomeScreen() {
   // ============================================================
   function getCountdown(deadline) {
     const today = new Date();
-    const due = new Date(deadline);
+    let due = new Date(deadline);
+
+    // If the deadline has no time component, treat it as end-of-day
+    if (!deadline.includes("T")) {
+      due = new Date(`${deadline}T23:59:59`);
+    }
+    
     const diffMs = due - today;
     const isOverdue = diffMs < 0;
     const absDiff = isOverdue ? Math.abs(diffMs) : diffMs;
@@ -45,6 +51,16 @@ function HomeScreen() {
     return `${countdown.days} days : ${String(countdown.hours).padStart(2, "0")} hours : ${String(countdown.minutes).padStart(2, "0")} minutes`;
   }
 
+  // ================================================================
+  // Priority Function — The higher the priority the larger the size
+  // ================================================================
+
+  function getPrioritySize(priority) {
+    if (priority === "High") return "1.15rem";
+    if (priority === "Medium") return "1rem";
+    return "0.9rem";
+  }
+
   // ============================================================
   // Delete Task — removes one task by id
   // ============================================================
@@ -55,62 +71,62 @@ function HomeScreen() {
     setTasks(tasks.filter((task) => task.id !== id));
   }
 
-  // ============================================================
-  // Split Tasks — Upcoming (\u226414 days out) vs Keep in Mind (>14)
-  // ============================================================
+  // ======================================================================================
+  // Split Tasks — Upcoming (\u226414 days out) vs Keep in Mind (>14) vs Overdue (<0 days)
+  // =======================================================================================
+  const overdue = tasks.filter((task) => getCountdown(task.deadline).isOverdue);
   const upcoming = tasks.filter(
-    (task) => getCountdown(task.deadline).days <= 14,
+    (task) => !getCountdown(task.deadline).isOverdue && getCountdown(task.deadline).days <= 14,
   );
   const keepInMind = tasks.filter(
-    (task) => getCountdown(task.deadline).days > 14,
+    (task) => !getCountdown(task.deadline).isOverdue && getCountdown(task.deadline).days > 14,
   );
 
   // ============================================================
-  // Render
+  // Function Render - JSX Cards are all repeated
   // ============================================================
-  return (
-    <div className="home-page">
-      <h1 className="welcome">Welcome To My Brain Vomit!</h1>
-      <br />
-      <h2 className="upcoming">Upcoming...</h2>
-      {upcoming.map((task) => {
-        const categoryMatch = categories.find((cat) => cat.name === task.category);
-        return(
-        <div key={task.id} className="task-card" style={{ borderLeftColor: categoryMatch?.color, borderLeftWidth: '6px' }}>
+  function renderCard(task) {
+      const categoryMatch = categories.find((cat) => cat.name === task.category);
+      return (
+        <div
+          key={task.id}
+          className="task-card"
+          style={{ borderLeftColor: categoryMatch?.color, borderLeftWidth: '6px' }}
+        >
           <div className="task-info">
-            <span>
+            <span style={{ fontSize: getPrioritySize(task.priority) }}>
               {task.name} — {task.category}
             </span>
-            <span className="task-countdown">
-              {formatTimeLeft(getCountdown(task.deadline))}
-            </span>
+            <span className="task-countdown">{formatTimeLeft(getCountdown(task.deadline))}</span>
           </div>
           <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
         </div>
-        );
-      })}
-      {upcoming.length === 0 && <p className="empty-state">Nothing here — dump a thought!</p>}
-      <br />
-      <h2 className="keep-in-mind">Keep in Mind...</h2>
-      {keepInMind.map((task) => {
-        const categoryMatch = categories.find((cat) => cat.name === task.category);
-        return(
-        <div key={task.id} className="task-card" style={{ borderLeftColor: categoryMatch?.color, borderLeftWidth: '6px' }}>
-          <div className="task-info">
-            <span>
-              {task.name} — {task.category}
-            </span>
-            <span className="task-countdown">
-              {formatTimeLeft(getCountdown(task.deadline))}
-            </span>
-          </div>
-          <button onClick={() => handleDelete(task.id)}>Declutter brain</button>
-        </div>
-        );
-      })}
-      {keepInMind.length === 0 && <p className="empty-state">Nothing here — dump a thought!</p>}
-    </div>
-  );
-}
+      );
+    }
+
+    return (
+      <div className="home-page">
+        <h1 className="welcome">Welcome To My Brain Vomit!</h1>
+        <br />
+
+        {overdue.length > 0 && (
+          <>
+            <h2 className="overdue">Overdue...</h2>
+            {overdue.map(renderCard)}
+            <br />
+          </>
+        )}
+
+        <h2 className="upcoming">Upcoming...</h2>
+        {upcoming.map(renderCard)}
+        {upcoming.length === 0 && <p className="empty-state">Nothing here — dump a thought!</p>}
+        <br />
+
+        <h2 className="keep-in-mind">Keep in Mind...</h2>
+        {keepInMind.map(renderCard)}
+        {keepInMind.length === 0 && <p className="empty-state">Nothing here — dump a thought!</p>}
+      </div>
+    );
+  }
 
 export default HomeScreen;
