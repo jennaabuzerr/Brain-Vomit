@@ -23,7 +23,7 @@ function BrainDump() {
     deadline: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [isPulsing, setIsPulsing] = useState(false);
   // ============================================================
   // Fetch Tasks — loads all saved tasks from the server on mount
   // ============================================================
@@ -65,6 +65,8 @@ function BrainDump() {
       const refreshed = await fetch('http://localhost:3001/api/tasks');
       const updatedTasks = await refreshed.json();
       setTasks(updatedTasks);
+      setIsPulsing(true);
+      setTimeout(() => setIsPulsing(false), 400);
       setRawText("");
     } catch (error) {
       console.error("Something went wrong, please try again", error);
@@ -173,8 +175,9 @@ function BrainDump() {
         <button onClick={handleClearBrain}>Clear Brain</button>
       </div>
       <div className="brain-scene">
+        <p className="brain-label">My Brain</p>
         {showList ? (
-          <div className="brain-list-overlay" style={{ width: brainSize }}>
+            <div className={`brain-list-overlay ${isPulsing ? 'brain-pulse' : ''}`} style={{ width: brainSize }}>
             {tasks.map((task) => {
               const categoryMatch = categories.find(
                 (cat) => cat.name === task.category,
@@ -249,13 +252,13 @@ function BrainDump() {
             {tasks.length === 0 && <p>Your brain is empty — go dump something!</p>}
           </div>
         ) : (
-          <BrainIcon width={brainSize} />
+          <div className={isPulsing ? 'brain-pulse' : ''} style={{ display: 'inline-block' }}>
+            <BrainIcon width={brainSize} />
+          </div>
         )}
-        <p className="brain-label">My Brain</p>
-
         <div
           className="bubble-container"
-          style={{ top: -40, left: brainSize + 110 }}
+          style={{ top: 15, left: brainSize + 50 }}
         >
           <ThoughtBubble />
           <textarea

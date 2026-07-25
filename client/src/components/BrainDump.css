@@ -1,6 +1,6 @@
 .brain-scene {
   position: relative;
-  width: 500px;
+  width: 400px;
   margin: 0 auto;
 }
 
@@ -61,7 +61,8 @@
   color: var(--brain-pink);
   font-size: 50px;
   text-align: center;
-  margin-top: -10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .brain-task-item button {
@@ -174,4 +175,34 @@
   .brain-label {
     font-size: 32px;
   }
+}
+
+/* ============================================================
+   New Task Animation — slides and fades in when a task first
+   appears in the brain overlay
+   ============================================================ */
+@keyframes taskSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.brain-task-item {
+  animation: taskSlideIn 0.35s ease forwards;
+}
+
+/* Brain pulses briefly when a new task lands */
+@keyframes brainPulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+.brain-pulse {
+  animation: brainPulse 0.4s ease;
 }
