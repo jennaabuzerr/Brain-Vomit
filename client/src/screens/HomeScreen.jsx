@@ -97,7 +97,7 @@ const sensors = useSensors(
   // ============================================================
   useEffect(() => {
     async function fetchTasks() {
-      const response = await fetch("http://localhost:3001/api/tasks");
+      const response = await fetch("https://brain-vomit-production.up.railway.app/api/tasks");
       const data = await response.json();
       setTasks(data);
     }
@@ -149,7 +149,7 @@ const sensors = useSensors(
   // Delete Task — removes one task by id
   // ============================================================
   async function handleDelete(id) {
-    await fetch(`http://localhost:3001/api/tasks/${id}`, {
+    await fetch(`https://brain-vomit-production.up.railway.app/api/tasks/${id}`, {
       method: "DELETE",
     });
     setTasks(tasks.filter((task) => task.id !== id));
@@ -191,7 +191,7 @@ const sensors = useSensors(
       t.id === taskId ? { ...t, section: overSection } : t
     ));
 
-    await fetch(`http://localhost:3001/api/tasks/${taskId}/section`, {
+    await fetch(`https://brain-vomit-production.up.railway.app/api/tasks/${taskId}/section`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ section: overSection }),

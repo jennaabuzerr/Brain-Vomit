@@ -59,7 +59,7 @@ function BrainDump() {
   // ============================================================
   useEffect(() => {
     async function fetchTasks() {
-      const response = await fetch("http://localhost:3001/api/tasks");
+      const response = await fetch("https://brain-vomit-production.up.railway.app/api/tasks");
       const data = await response.json();
       setTasks(data);
       // Generate a scatter position for each task
@@ -91,14 +91,14 @@ function BrainDump() {
     setError(null);
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:3001/api/categorize", {
+      const response = await fetch("https://brain-vomit-production.up.railway.app/api/categorize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ raw_text: rawText }),
       });
 
       const data = await response.json();
-      const refreshed = await fetch("http://localhost:3001/api/tasks");
+      const refreshed = await fetch("https://brain-vomit-production.up.railway.app/api/tasks");
       const updatedTasks = await refreshed.json();
       setTasks(updatedTasks);
       const newPositions = {};
@@ -125,7 +125,7 @@ function BrainDump() {
   async function handleDelete(id) {
     setError(null);
     try {
-      const response = await fetch(`http://localhost:3001/api/tasks/${id}`, {
+      const response = await fetch(`https://brain-vomit-production.up.railway.app/api/tasks/${id}`, {
         method: "DELETE",
       });
       setTasks(tasks.filter((t) => t.id !== id));
@@ -143,7 +143,7 @@ function BrainDump() {
     try {
       await Promise.all(
         tasks.map((task) =>
-          fetch(`http://localhost:3001/api/tasks/${task.id}`, {
+          fetch(`https://brain-vomit-production.up.railway.app/api/tasks/${task.id}`, {
             method: "DELETE",
           }),
         ),
@@ -176,7 +176,7 @@ function BrainDump() {
   async function handleSaveEdit(id) {
     setError(null);
     try {
-      await fetch(`http://localhost:3001/api/tasks/${id}`, {
+      await fetch(`https://brain-vomit-production.up.railway.app/api/tasks/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editForm),
