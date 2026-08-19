@@ -1,0 +1,76 @@
+/* ============================================================
+   Mini Calendar — sidebar calendar showing task deadlines
+   ============================================================ */
+.mini-calendar {
+  background: white;
+  border: 2px solid var(--brain-pink);
+  border-radius: 14px;
+  padding: 12px;
+  width: 220px;
+  box-shadow: 3px 4px 0 var(--brain-pink);
+  font-family: var(--font-body);
+  margin-bottom: 20px;
+}
+
+.mini-cal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-family: var(--font-handwritten);
+  color: var(--brain-pink);
+  font-size: 1rem;
+}
+
+.mini-cal-header button {
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: var(--brain-pink);
+  font-size: 1.2rem;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+.mini-cal-header button:hover {
+  background: var(--brain-pink);
+  color: white;
+}
+
+.mini-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  text-align: center;
+}
+
+.mini-cal-label {
+  font-size: 0.65rem;
+  color: #aaa;
+  padding-bottom: 4px;
+}
+
+.mini-cal-day {
+  font-size: 0.75rem;
+  padding: 3px 0;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mini-cal-today {
+  background: var(--brain-pink);
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.mini-cal-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--brain-pink);
+  margin-top: 1px;
+}

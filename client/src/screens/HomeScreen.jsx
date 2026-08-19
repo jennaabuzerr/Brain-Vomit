@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import "../components/HomeScreen.css";
 import categories from '../data/categories';
+import MiniCalendar from "../components/MiniCalendar";
 import {
   DndContext,
   PointerSensor,
   useSensor,
   useSensors,
-  DragOverlay,
   closestCorners,
 } from '@dnd-kit/core';
 import {
@@ -270,9 +270,15 @@ const keepInMind = tasks.filter((task) => {
     }
 
     return (
-  <div className="home-page">
-    <h1 className="welcome">Welcome To My Brain Vomit!</h1>
-    <br />
+      <div className="home-layout">
+        {/* Sidebar with calendar */}
+        <div className="home-sidebar">
+          <MiniCalendar tasks={tasks} />
+        </div>
+        {/* Main content */}
+        <div className="home-page">
+          <h1 className="welcome">Welcome To My Brain Vomit!</h1>
+      <br />
 
     <div className="sort-controls">
       <label>Sort by: </label>
@@ -343,6 +349,7 @@ const keepInMind = tasks.filter((task) => {
     </SortableContext>
   </DroppableSection>
   </DndContext>
+  </div>
   </div>
   );
 }
