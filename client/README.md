@@ -1,5 +1,8 @@
 # 🧠 Brain Vomit
 
+## Live Demo
+[https://brain-vomit.vercel.app](https://brain-vomit.vercel.app)
+
 A place to dump every thought crowding your brain — school, events, self care, chores — and let AI sort the chaos into something you can actually act on.
 
 Type it all out, let AI make sense of it. Brain Vomit turns a messy, unfiltered brain dump into an organized, prioritized dashboard, with a countdown to every deadline and a bit of personality along the way.
