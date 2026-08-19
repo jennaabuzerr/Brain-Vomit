@@ -129,7 +129,7 @@
 
 @media (max-width: 600px) {
   .brain-dump-page {
-    padding-top: 20px;
+    padding-top: 120px;
     overflow-x: hidden;
   }
 
@@ -156,8 +156,10 @@
   }
 
   .brain-label {
-    font-size: 32px;
+  font-size: 28px;
+  text-align: center;
   }
+
 }
 
 /* ==============================================================================================
