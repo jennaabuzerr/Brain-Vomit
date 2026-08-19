@@ -71,3 +71,31 @@
   color: var(--brain-pink);
   cursor: pointer;
 }
+
+@media (max-width: 768px) {
+  .home-layout {
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .home-sidebar {
+    width: 100%;
+    padding-top: 0;
+    position: static;
+  }
+
+  .mini-calendar {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .home-page {
+    max-width: 100%;
+    padding: 0 0 100px 0;
+  }
+
+  h1.welcome {
+    font-size: 28px;
+  }
+}
