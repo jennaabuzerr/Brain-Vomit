@@ -177,6 +177,38 @@
   }
 }
 
+/* ==============================================================================================
+   Scatter Layout — tasks float around the brain as tags, Brain fades when scatter view is active
+   ============================================================================================== */
+.brain-scatter .brain-fade {
+  opacity: 0.15;
+  transition: opacity 0.3s ease;
+}
+
+.brain-scatter {
+  position: relative;
+  margin: 0 auto;
+  min-height: 600px;
+}
+
+.scatter-tag {
+  position: absolute;
+  background: white;
+  border: 2px solid currentColor;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 1px 2px 0 currentColor;
+  transition: transform 0.15s ease;
+  z-index: 10;
+}
+
+.scatter-tag:hover {
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
 /* ============================================================
    New Task Animation — slides and fades in when a task first
    appears in the brain overlay

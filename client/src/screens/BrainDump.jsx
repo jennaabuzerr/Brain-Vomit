@@ -24,31 +24,34 @@ function BrainDump() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPulsing, setIsPulsing] = useState(false);
+  const [scatterPositions, setScatterPositions] = useState({});
 
   // ============================================================
   // Brain Theme — color presets for the brain, saved to
   // localStorage so the choice persists between sessions
   // ============================================================
   const [brainTheme, setBrainTheme] = useState(() => {
-    const saved = localStorage.getItem('brainTheme');
-    return saved ? JSON.parse(saved) : { name: 'Pink', stroke: '#ff6090', fill: '#ffe0ec' };
+    const saved = localStorage.getItem("brainTheme");
+    return saved
+      ? JSON.parse(saved)
+      : { name: "Pink", stroke: "#ff6090", fill: "#ffe0ec" };
   });
 
   const brainThemes = [
-    { name: 'Pink',   stroke: '#ff6090', fill: '#ffe0ec' },
-    { name: 'Blue',   stroke: '#71c6ed', fill: '#dff0fa' },
-    { name: 'Green',   stroke: '#3fa34d', fill: '#d4f5dc' },
-    { name: 'Purple', stroke: '#9b59b6', fill: '#ead5f7' },
-    { name: 'Orange',  stroke: '#e8890c', fill: '#fde8c8' },
-    { name: 'Black',  stroke: '#222222', fill: '#eeeeee' },
-    { name: 'Red',   stroke: '#c33b3bff', fill: '#f8bebeff' },
-    { name: 'Yellow',   stroke: '#e1bc04ff', fill: '#f5f5b8ff' },
-    { name: 'White',   stroke: '#b3b0b0ff', fill: '#ffffff' }
+    { name: "Pink", stroke: "#ff6090", fill: "#ffe0ec" },
+    { name: "Blue", stroke: "#71c6ed", fill: "#dff0fa" },
+    { name: "Green", stroke: "#3fa34d", fill: "#d4f5dc" },
+    { name: "Purple", stroke: "#9b59b6", fill: "#ead5f7" },
+    { name: "Orange", stroke: "#e8890c", fill: "#fde8c8" },
+    { name: "Black", stroke: "#222222", fill: "#eeeeee" },
+    { name: "Red", stroke: "#c33b3bff", fill: "#f8bebeff" },
+    { name: "Yellow", stroke: "#e1bc04ff", fill: "#f5f5b8ff" },
+    { name: "White", stroke: "#b3b0b0ff", fill: "#ffffff" },
   ];
 
   function handleThemeChange(theme) {
     setBrainTheme(theme);
-    localStorage.setItem('brainTheme', JSON.stringify(theme));
+    localStorage.setItem("brainTheme", JSON.stringify(theme));
   }
 
   // ============================================================
@@ -59,6 +62,12 @@ function BrainDump() {
       const response = await fetch("http://localhost:3001/api/tasks");
       const data = await response.json();
       setTasks(data);
+      // Generate a scatter position for each task
+      const positions = {};
+      data.forEach((task, index) => {
+        positions[task.id] = generateScatterPosition(index, data.length);
+      });
+      setScatterPositions(positions);
     }
     fetchTasks();
   }, []);
@@ -89,16 +98,23 @@ function BrainDump() {
       });
 
       const data = await response.json();
-      const refreshed = await fetch('http://localhost:3001/api/tasks');
+      const refreshed = await fetch("http://localhost:3001/api/tasks");
       const updatedTasks = await refreshed.json();
       setTasks(updatedTasks);
+      const newPositions = {};
+      updatedTasks.forEach((task, index) => {
+        newPositions[task.id] =
+          scatterPositions[task.id] ||
+          generateScatterPosition(index, updatedTasks.length);
+      });
+      setScatterPositions(newPositions);
       setIsPulsing(true);
       setTimeout(() => setIsPulsing(false), 400);
       setRawText("");
     } catch (error) {
       console.error("Something went wrong, please try again", error);
       setError("Something went wrong, please try again");
-    }finally {
+    } finally {
       setIsSubmitting(false);
     }
   }
@@ -189,6 +205,13 @@ function BrainDump() {
     }
   }
 
+  function generateScatterPosition(index, total) {
+    const angle = (index / Math.max(total, 1)) * 2 * Math.PI;
+    const radius = 250 + Math.random() * 100;
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
+    return { x, y };
+  }
   // ============================================================
   // Render
   // ============================================================
@@ -201,52 +224,83 @@ function BrainDump() {
         </button>
         <button onClick={handleClearBrain}>Clear Brain</button>
         <div className="theme-picker">
-        {brainThemes.map((theme) => (
-          <button
-            key={theme.name}
-            onClick={() => handleThemeChange(theme)}
-            title={theme.name}
-            style={{
-              background: theme.fill,
-              border: `3px solid ${theme.stroke}`,
-              width: '28px',
-              height: '28px',
-              borderRadius: '50%',
-              padding: 0,
-              boxShadow: brainTheme.name === theme.name
-                ? `0 0 0 3px ${theme.stroke}`
-                : '1px 2px 0 #aaa',
-            }}
-          />
-        ))}
-      </div>
+          {brainThemes.map((theme) => (
+            <button
+              key={theme.name}
+              onClick={() => handleThemeChange(theme)}
+              title={theme.name}
+              style={{
+                background: theme.fill,
+                border: `3px solid ${theme.stroke}`,
+                width: "28px",
+                height: "28px",
+                borderRadius: "50%",
+                padding: 0,
+                boxShadow:
+                  brainTheme.name === theme.name
+                    ? `0 0 0 3px ${theme.stroke}`
+                    : "1px 2px 0 #aaa",
+              }}
+            />
+          ))}
+        </div>
       </div>
       <div className="brain-scene">
         <p className="brain-label">My Brain</p>
         {showList ? (
-            <div className={`brain-list-overlay ${isPulsing ? 'brain-pulse' : ''}`} style={{ width: brainSize }}>
+          <div
+            className="brain-scatter"
+            style={{ width: brainSize, height: brainSize }}
+          >
+            {/* Brain stays visible underneath as the center */}
+            <div
+              className={`${isPulsing ? "brain-pulse" : ""} brain-fade`}
+              style={{ position: "absolute", top: 0, left: 0 }}
+            >
+              <BrainIcon
+                width={brainSize}
+                color={brainTheme.stroke}
+                fill={brainTheme.fill}
+              />
+            </div>
+            {/* Tasks scatter around the brain */}
             {tasks.map((task) => {
+              const pos = scatterPositions[task.id] || { x: 0, y: 0 };
               const categoryMatch = categories.find(
                 (cat) => cat.name === task.category,
               );
               return (
                 <div
                   key={task.id}
-                  className="brain-task-item"
+                  className="scatter-tag"
                   style={{
-                    color: categoryMatch?.color,
+                    position: "absolute",
+                    left: `calc(50% + ${pos.x}px)`,
+                    top: `calc(50% + ${pos.y}px)`,
+                    color: categoryMatch?.color || "var(--brain-pink)",
                     fontSize: getPrioritySize(task.priority),
+                    transform: "translate(-50%, -50%)",
                   }}
                   onClick={() => setSelectedId(task.id)}
                 >
                   {task.name}
                   {selectedId === task.id && (
                     <>
-                      <button onClick={() => handleDelete(task.id)}>
-                        Declutter
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(task.id);
+                        }}
+                      >
+                        ✕
                       </button>
-                      <button onClick={() => handleEditClick(task)}>
-                        Edit
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditClick(task);
+                        }}
+                      >
+                        ✎
                       </button>
                     </>
                   )}
@@ -296,11 +350,29 @@ function BrainDump() {
                 </div>
               );
             })}
-            {tasks.length === 0 && <p>Your brain is empty — go dump something!</p>}
+            {tasks.length === 0 && (
+              <p
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                }}
+              >
+                Your brain is empty!
+              </p>
+            )}
           </div>
         ) : (
-          <div className={isPulsing ? 'brain-pulse' : ''} style={{ display: 'inline-block' }}>
-            <BrainIcon width={brainSize} color={brainTheme.stroke} fill={brainTheme.fill} />
+          <div
+            className={isPulsing ? "brain-pulse" : ""}
+            style={{ display: "inline-block" }}
+          >
+            <BrainIcon
+              width={brainSize}
+              color={brainTheme.stroke}
+              fill={brainTheme.fill}
+            />
           </div>
         )}
         <div
@@ -315,7 +387,11 @@ function BrainDump() {
             onChange={(e) => setRawText(e.target.value)}
             ref={textareaRef}
           />
-          <button className="send-to-brain-btn" onClick={handleSubmit} disabled={isSubmitting}>
+          <button
+            className="send-to-brain-btn"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Thinking..." : "Send to Brain"}
           </button>
         </div>
