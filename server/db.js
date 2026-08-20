@@ -17,4 +17,12 @@ db.exec(`
   )
 `);
 
+// Add section column if it doesn't exist yet
+// (handles both fresh deploys and existing databases)
+try {
+  db.exec('ALTER TABLE tasks ADD COLUMN section TEXT DEFAULT NULL;');
+} catch (e) {
+  // Column already exists ignore the error
+}
+
 module.exports = db;
