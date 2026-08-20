@@ -176,12 +176,13 @@ function BrainDump() {
   async function handleSaveEdit(id) {
     setError(null);
     try {
+      const currentTask = tasks.find((t) => t.id === id);
       await fetch(`https://brain-vomit-production.up.railway.app/api/tasks/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editForm),
+        body: JSON.stringify({ ...editForm, section: currentTask?.section }),
       });
-      setTasks(tasks.map((t) => (t.id === id ? { ...editForm, id: t.id } : t)));
+      setTasks(tasks.map((t) => (t.id === id ? { ...editForm, id: t.id, section: t.section } : t)));
       setEditingId(null);
     } catch (error) {
       console.error("Something went wrong, please try again", error);
@@ -207,10 +208,10 @@ function BrainDump() {
 
   function generateScatterPosition(index, total) {
     const angle = (index / Math.max(total, 1)) * 2 * Math.PI;
-    const radius = 250 + Math.random() * 100;
+    const radius = 120 + Math.random() * 40;
     const x = Math.cos(angle) * radius;
     const y = Math.sin(angle) * radius;
-    return { x, y };
+  return { x, y };
   }
   // ============================================================
   // Render
